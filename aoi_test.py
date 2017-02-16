@@ -14,6 +14,7 @@ from winsound import Beep
 from eyetracker import Eyetracker
 from psychopy.visual import Window, Rect
 from psychopy.core import wait
+from ctypes import *
 
 def trigger_signal():
     Beep(750,800) #frequency, HZ, duration, ms
@@ -23,11 +24,14 @@ disp=Window(size=DISPSIZE, units='pix', color=(0,0,0), fullscr=True)
 stim=Rect(disp, pos=RECPOS, width=RECSIZE[0], height=RECSIZE[1], 
           lineColor=(-1,-1,-1), fillColor=(-1,-1,-1), lineWidth=3)
 
+output_val=c_int(0)
+p_output_val=pointer(c_int(output_val))
+
 def main():
-    #tracker=Eyetracker(debug = True)
-    #tracker.connect_to_iView()
-    #tracker.calibrate()
-    #tracker.validate()
+    tracker=Eyetracker(debug = True)
+    tracker.connect_to_iView()
+    tracker.calibrate()
+    tracker.validate()
     
     stim.draw()
     disp.flip()
@@ -37,14 +41,16 @@ def main():
     tracker.start_recording()
     
     tracker.define_aoi('block',AOIPOS[0],AOIPOS[1],AOIPOS[2],AOIPOS[3])
-    tracker.enable_aoi('block')
-    
+    #tracker.enable_aoi('block')
+
     try:
-        while True:
-            tracker.aoi_callback(trigger_signal())
+        while 
+            ret_out=aoi_hit(p_output_val)
+            if ret_out==1:
+                trigger_signal()
     except KeyboardInterrupt:
         pass
-    
+
     tracker.stop_recording()
     tracker.disconnect()
     trigger_signal()

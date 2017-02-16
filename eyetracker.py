@@ -181,20 +181,20 @@ class Eyetracker():
 
 
     def enable_aoi(self, name):
-        '''Enable AOI'''
+        '''Enable AOI (redundant?)'''
         self.res=iViewXAPI.iV_EnableAOI(c_char_p(name))
         print 'AOI enabled'+ str(self.res)
 
 
-#    def aoi_hit(self):
-#        '''What does this thing do?'''
-#        self.res=iViewXAPI.iV_GetAOIOutputValue(0)
-#        return self.res
+    def aoi_hit(self, poutputvalue):
+        '''What does this thing do?'''
+        self.res=iViewXAPI.iV_GetAOIOutputValue(poutpytValue)
+        return self.res
 
         
-    def aoi_hit(self, function):
-        self.res=iViewXAPI.iV_SetAOIHitCallback(pointer(function))
-        print 'AOI hit'+ str(self.res)
+#    def aoi_hit(self, function):
+#        self.res=iViewXAPI.iV_SetAOIHitCallback(pointer(function))
+#        print 'AOI hit'+ str(self.res)
 
 if __name__ == '__main__':
             

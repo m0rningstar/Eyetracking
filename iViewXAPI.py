@@ -124,14 +124,15 @@ else:
 #===========================
 
 systemData = CSystem(0, 0, 0, 0, 0, 0, 0, 0)
-calibrationData = CCalibration(5, 1, 0, 0, 1, 20, 239, 1, 15, b"")
+calibrationData = CCalibration(5, 1, 0, 0, 1, 20, 239, 1, 15, b'')
 leftEye = CEye(0,0,0)
 rightEye = CEye(0,0,0)
 sampleData = CSample(0,leftEye,rightEye,0)
 eventData = CEvent('F', 'L', 0, 0, 0, 0, 0)
 accuracyData = CAccuracy(0,0,0,0)
-aoi = CAOIRectangleStruct(0,100,0,100)
-aoistruct = CAOIStruct(b'group0',b'AOI0',1,'r',1,b'Output message: ',3, aoi)
+aoi = CAOIRectangleStruct(0,0,0,0)
+aoistruct = CAOIStruct(b'',b'',0,'r',0,b'',0, aoi)
+
 
 
 

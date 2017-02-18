@@ -51,8 +51,8 @@ class Eyetracker():
         self.number_of_points = number_of_points
         self.screen = screen
 #        self.im  = create_stream()
-        self.host_ip = host_ip
-        self.server_ip = server_ip
+        self.host_ip = hostip
+        self.server_ip = serverip
 #        if not self.im:
 #            if debug != True:
 #                self.exit_()
@@ -153,16 +153,16 @@ class Eyetracker():
         sys.exit()
 
 
-    def define_aoi(self, name, x1, x2, y1, y2):
-        '''Configure an AOI rectangle zone'''
+    def define_aoi(self, name, value, x1, x2, y1, y2):
+        '''Configure an AOI rectangle'''
         
-        aoigroup='a' # name of AOI group
+        aoigroup='Group1' # name of AOI group
         aoiname=str(name) # AOI name
         enabled=1 # 1 - trigger functionality enabled, 0 - disabled
         eye='r' # 'r' - right eye, 'l' - left eye
         fixhit=1 # 1 - fixation as hit trigger, 0 - raw data as trigger
-        message='b' # message to sent to idf data stream
-        outputvalue=1 # TTL output value
+        message='AOI hit' # message to sent to idf data stream
+        outputvalue=int(value) # TTL output value
         aoi=CAOIRectangleStruct(x1,x2,y1,y2) #position of AOI
         
         aoi_struct=CAOIStruct(aoigroup, aoiname, enabled, eye, fixhit, message, outputvalue, aoi)
@@ -171,7 +171,7 @@ class Eyetracker():
 
 
     def define_aoi_port(self, port):
-        '''Difine an port for sending a TTL trigger'''
+        '''Difine a port for sending TTL triggers'''
         self.res=iViewXAPI.iV_DefineAOIPort(c_int(port)) #4444 or 5555?
 
 
@@ -181,20 +181,31 @@ class Eyetracker():
 
 
     def enable_aoi(self, name):
-        '''Enable AOI (redundant?)'''
+        '''Enable AOI'''
         self.res=iViewXAPI.iV_EnableAOI(c_char_p(name))
         print 'AOI enabled'+ str(self.res)
 
 
-    def aoi_hit(self, poutputvalue):
-        '''What does this thing do?'''
-        self.res=iViewXAPI.iV_GetAOIOutputValue(poutpytValue)
+    def get_aoi_otput(self, value):
+        '''???'''
+        self.res=iViewXAPI.iV_GetAOIOutputValue(value)
         return self.res
 
-        
-#    def aoi_hit(self, function):
-#        self.res=iViewXAPI.iV_SetAOIHitCallback(pointer(function))
-#        print 'AOI hit'+ str(self.res)
+
+    def get_sample(self):
+        '''Updates "sampleData" structure with current eye tracking data'''
+        self.res=iViewXAPI.iV_GetSample(byref(sampleData))
+        print 'Sample data updated'+ str(self.res)
+        return self.res
+
+
+    def get_event(self):
+        '''Updates "eventData" structure with current event data'''
+        self.res=iViewXAPI.iV_GetEvent(byref(eventData))
+        print 'Event data updated'+ str(self.res)
+        return self.res
+
+
 
 if __name__ == '__main__':
             

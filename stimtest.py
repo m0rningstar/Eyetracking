@@ -5,7 +5,7 @@ Created on Fri Feb 17 23:33:40 2017
 @author: apron
 """
 from psychopy.monitors import Monitor
-from psychopy.visual import Window, Circle
+from psychopy.visual import Window, Circle, ImageStim
 from psychopy.event import Mouse
 
 SIZE=(1920,1080) # (1680,1050)
@@ -15,9 +15,12 @@ POS={1:(1.5,0), 2:(3,0), 3:(5,0), 4:(1.06,1.06), 5:(2.12,2.12), 6:(3.54,3.54),
      13:(-1.5,0),14:(-3,0),15:(-5,0), 16:(-1.06,-1.06), 17:(-2.12,-2.12), 18:(-3.54,-3.54), 
      19:(0,-1.5), 20:(0,-3), 21:(0,-5), 22:(1.06,-1.06), 23:(2.12,-2.12), 24:(3.54, -3.54)}
 DISTANCE=60
-WIDTH=31 #
+WIDTH=31 # 47.4
 STIMSIZE= [0.4, 1.0, 2.0]
+LETTERSIZE= [0.9, 1.8, 2.6] #ADJASTMENT NEEDED!
 
+            
+            
 mon = Monitor('ProBook') #('BlOne')
 mon.setWidth(WIDTH) 
 mon.setDistance(60)
@@ -27,11 +30,14 @@ disp=Window(size=SIZE, monitor=mon, units='deg', color=(-1,-1,-1), fullscr=True)
 
 mouse=Mouse()
 
-fixmark=Circle(disp, radius=0.01,edges=32, pos=CENTER, lineColor=(0,0,0))
+fixmark=Circle(disp, radius=0.05 ,edges=32, pos=CENTER, lineColor=(0,0,0))
 
-stim1=Circle(disp, radius=0.3, edges=32, pos=POS[1], lineColor=(0,0,0), lineWidth=3)
-stim2=Circle(disp, radius=0.6, edges=32, pos=POS[2], lineColor=(0,0,0), lineWidth=3)
-stim3=Circle(disp, radius=1.0, edges=32, pos=POS[3], lineColor=(0,0,0), lineWidth=3)
+#stim1=Circle(disp, radius=0.3, edges=32, pos=POS[1], lineColor=(0,0,0), lineWidth=3)
+image1=ImageStim(disp, image='3-0.png', pos=POS[1], size=0.9)
+#stim2=Circle(disp, radius=0.6, edges=32, pos=POS[2], lineColor=(0,0,0), lineWidth=3)
+image2=ImageStim(disp, image='2-0.png', pos=POS[2], size=1.8)
+#stim3=Circle(disp, radius=1.0, edges=32, pos=POS[3], lineColor=(0,0,0), lineWidth=3)
+image3=ImageStim(disp, image='1-0.png', pos=POS[3], size=2.6)
 
 stim4=Circle(disp, radius=0.3, edges=32, pos=POS[4], lineColor=(0,0,0), lineWidth=3)
 stim5=Circle(disp, radius=0.6, edges=32, pos=POS[5], lineColor=(0,0,0), lineWidth=3)
@@ -63,9 +69,12 @@ stim23=Circle(disp, radius=0.6, edges=32, pos=POS[23], lineColor=(0,0,0), lineWi
 stim24=Circle(disp, radius=1.0, edges=32, pos=POS[24], lineColor=(0,0,0), lineWidth=3)
 
 fixmark.draw()
-stim1.draw()
-stim2.draw()
-stim3.draw()
+#stim1.draw()
+#stim2.draw()
+#stim3.draw()
+image1.draw()
+image2.draw()
+image3.draw()
 stim4.draw()
 stim5.draw()
 stim6.draw()

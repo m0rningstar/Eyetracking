@@ -35,6 +35,11 @@
 # Loads iViewXAPI.dll / iViewXAPI64.dll
 # This script shows how to set up an experiment with Python 2.7.1 (with ctypes Library) 
 
+"""
+Wed Feb 22 01:12:23 2017
+
+modified by m0rningstar
+"""
 
 from ctypes import *
 import platform

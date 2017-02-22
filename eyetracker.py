@@ -7,6 +7,12 @@
 # Date: December 20, 2016
 # ----------------------------------------------------------------------------
 
+"""
+Wed Feb 22 01:12:23 2017
+
+modified by m0rningstar
+"""
+
 from iViewXAPI import  *  #iViewX library
 from ctypes import *
 import time, sys
@@ -98,7 +104,7 @@ class Eyetracker():
 
     def send_marker_to_iViewX(self, marker):
         ''' Sends marker to the eyetracker. Marker becomes iViewX event. '''
-        res = iViewXAPI.iV_SendImageMessage(marker)
+        res = iViewXAPI.iV_SendImageMessage(c_char_p(marker))
         # if str(self.res) !='1':
             # print "iV_SendImageMessage " + str(self.res)
     
@@ -134,6 +140,7 @@ class Eyetracker():
 
     def disconnect(self):
         self.res=iViewXAPI.iV_Disconnect()
+
 
     def exit_(self):
         ''' Close all streams, save data and exit.'''
@@ -172,12 +179,13 @@ class Eyetracker():
 
     def define_aoi_port(self, port):
         '''Difine a port for sending TTL triggers'''
-        self.res=iViewXAPI.iV_DefineAOIPort(c_int(port)) #4444 or 5555?
+        self.res=iViewXAPI.iV_DefineAOIPort(c_int(port)) 
+        print "AOI port defined " + str(self.res)
 
 
     def release_aoi_port(self):
         '''Release a port'''
-        self.res=iVeiwXAPI.iV_ReleaseAOIPort()
+        self.res=iViewXAPI.iV_ReleaseAOIPort()
 
 
     def enable_aoi(self, name):
@@ -187,25 +195,35 @@ class Eyetracker():
 
 
     def get_aoi_otput(self, value):
-        '''???'''
-        self.res=iViewXAPI.iV_GetAOIOutputValue(value)
+        '''Returns AOI output value'''
+        self.res=iViewXAPI.iV_GetAOIOutputValue(value) #doesn't work properly?
         return self.res
 
 
     def get_sample(self):
         '''Updates "sampleData" structure with current eye tracking data'''
         self.res=iViewXAPI.iV_GetSample(byref(sampleData))
-        print 'Sample data updated'+ str(self.res)
+        print 'Trying to get sample data: '+ str(self.res)
         return self.res
 
 
     def get_event(self):
         '''Updates "eventData" structure with current event data'''
         self.res=iViewXAPI.iV_GetEvent(byref(eventData))
-        print 'Event data updated'+ str(self.res)
+        #print 'Trying to get event data: '+ str(self.res)
         return self.res
 
 
+    def is_connected(self):
+        '''Checks for connection with iVeiwXAPI server'''
+        self.res=iViewXAPI.iV_IsConnected()
+        print 'Tracker connected'+ str(self.res)
+
+
+    def set_online_detection(self, duration, dispersion):
+        '''Defines minimal duration (ms) and dispersion (deg)
+        for online fixation detection'''
+        self.res=iViewXAPI.iV_SetEventDetectionParameter(c_int(duration), c_int(dispersion))
 
 if __name__ == '__main__':
             

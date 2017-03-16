@@ -91,9 +91,58 @@ def process_events(filename, debug=False):
     return data_dict
 
 
+
+def find_fixations(df, area, duration, time, eye):
+    '''Returns a pandas dataframe contained all fixations that meets user specified
+    conditions (location, duration and time).
+    
+    arguments
+    
+    df  -  events dictionary
+    
+    area  -   list (x1, x2, y1, y2) that defines a screen area for fixation search 
+    
+    duration  -  minimal desirable duration of fixations in microseconds
+    
+    time  -  list (t1, t2)  that defines a time window for fixation search
+    
+    eye  -  indicate which eye data is used: 'l',  or 'r'
+    
+    returns
+    
+    f  -  dataframe with fixations
+    '''
+    
+    if eye == 'r':
+        fix=df['Fixation R']
+    elif eye == 'l':
+        fix=df['Fixation L']
+    
+    ###########################################################################
+    #Type correction
+    fix['Duration']=fix['Duration'].astype(int)
+    fix['Location X']=fix['Location X'].astype(float)
+    fix['Location Y']=fix['Location Y'].astype(float)
+    fix['Start']=fix['Start'].astype(int)
+    
+    ###########################################################################
+    #Dataframe slicing by Boolean indexing
+    f= fix[(fix['Duration'] >=duration) & (fix['Location X']>area[0]) & 
+           (fix['Location X']<area[1]) & (fix['Location Y']>area[2]) & (fix['Location Y']<area[3]) & 
+           (fix['Start']>time[0]) & (fix['Start']<time[1])]
+    
+    return f
+
+
 def main():
     filename=str(raw_input("Enter filename: ")+".txt")
-    df=process_events(filename, debug=True)
+    #filename=r'example.txt'
+    df=process_events(filename, debug=False)
+    area=(900,1500,500 ,600)
+    time=(2000000000,3000000000)
+    duration = 60000
+    fixations=find_fixations(df, area,duration, time, 'l')
+    print fixations['Duration'].mean()
     
 if __name__ == '__main__':
     main()

@@ -11,7 +11,7 @@ import datetime
 import pandas as pd
 
 
-def process_events(filename, debug=False):
+def process_events(filepath, debug=False):
     '''Returns a dictionary contains pandas dataframes for each specific type 
     of event. Dictionary keys are:
     User Event
@@ -24,7 +24,7 @@ def process_events(filename, debug=False):
     
     arguments
     
-    filename  -  name of the file (produced by IDF Event Detector) to be read
+    filepath  -  path to the file (produced by IDF Event Detector) to be read
     
     keyword arguments
     
@@ -48,11 +48,11 @@ def process_events(filename, debug=False):
     #read the file to dataframe
     start_time = datetime.datetime.now()
     try:
-        raw = pd.read_csv(os.path.abspath(filename), sep='\t', 
+        raw = pd.read_csv(filepath, sep='\t', 
                     names=[str(i) for i in range(17)], squeeze=True) # weird 'names' argument is required because of variable column number
     except IOError:
-        print "ERROR: file '%s' does not exist" % filename
-    message('file "%s" was read to dataframe ' % filename)
+        print "ERROR: file '%s' does not exist" % filepath
+    message('file "%s" was read to dataframe ' % filepath)
     message('time elapsed: ' + str(datetime.datetime.now()- start_time))
     
     #headers for events dataframes
@@ -92,57 +92,56 @@ def process_events(filename, debug=False):
 
 
 
-def find_fixations(df, area, duration, time, eye):
+def find_fixations(fix, time=None, area=None, duration=50):
     '''Returns a pandas dataframe contained all fixations that meets user specified
     conditions (location, duration and time).
     
     arguments
     
-    df  -  events dictionary
+    df  -  fixations dataframe
     
-    area  -   list (x1, x2, y1, y2) that defines a screen area for fixation search 
+    keyword arguments
+
+    time  -  set (t1, t2)  that defines a time window for fixation search (in microseconds)
+
+    area  -   coordinates [left,bottom,right,top] that defines a screen area for fixation search (in pixels)
     
-    duration  -  minimal desirable duration of fixations in microseconds
-    
-    time  -  list (t1, t2)  that defines a time window for fixation search
-    
-    eye  -  indicate which eye data is used: 'l',  or 'r'
+    duration  -  minimal desirable duration of fixations (in microseconds)
     
     returns
     
     f  -  dataframe with fixations
     '''
     
-    if eye == 'r':
-        fix=df['Fixation R']
-    elif eye == 'l':
-        fix=df['Fixation L']
-    
     ###########################################################################
     #Type correction
-    fix['Duration']=fix['Duration'].astype(int)
+    fix['Duration']=fix['Duration'].astype(float)
     fix['Location X']=fix['Location X'].astype(float)
     fix['Location Y']=fix['Location Y'].astype(float)
-    fix['Start']=fix['Start'].astype(int)
+    fix['Start']=fix['Start'].astype(float)
     
     ###########################################################################
     #Dataframe slicing by Boolean indexing
-    f= fix[(fix['Duration'] >=duration) & (fix['Location X']>area[0]) & 
-           (fix['Location X']<area[1]) & (fix['Location Y']>area[2]) & (fix['Location Y']<area[3]) & 
-           (fix['Start']>time[0]) & (fix['Start']<time[1])]
+    
+    f= fix[(fix['Duration'] >=duration)]
+    if time:
+        f=f[(f['Start']>time[0]) & (f['Start']<time[1])]
+    if area:
+        f=f[(f['Location X']>area[0]) & (f['Location X']<area[2]) & (f['Location Y']>area[1]) & (f['Location Y']<area[3])]
+    f.reset_index(inplace=True)
     
     return f
 
 
-def main():
-    filename=str(raw_input("Enter filename: ")+".txt")
-    #filename=r'example.txt'
-    df=process_events(filename, debug=False)
-    area=(900,1500,500 ,600)
-    time=(2000000000,3000000000)
-    duration = 60000
-    fixations=find_fixations(df, area,duration, time, 'l')
-    print fixations['Duration'].mean()
-    
-if __name__ == '__main__':
-    main()
+def matrix_coordinates(stimuli, resolution, stim_size, shrinkage):
+    coors=[]
+    for item in stimuli:
+        foo=[]
+        foo.extend([bar/shrinkage-(stim_size/2) for bar in item])
+        foo.extend([bar/shrinkage+(stim_size/2) for bar in item])
+        foo[0]+=resolution[0]/2
+        foo[1]+=resolution[1]/2
+        foo[2]+=resolution[0]/2
+        foo[3]+=resolution[1]/2
+        coors.append(foo)
+    return coors

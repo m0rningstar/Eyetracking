@@ -104,7 +104,7 @@ def find_fixations(fix, time=None, area=None, duration=50):
 
     time  -  set (t1, t2)  that defines a time window for fixation search (in microseconds)
 
-    area  -   coordinates [left,bottom,right,top] that defines a screen area for fixation search (in pixels)
+    area  -   coordinates [left,top,right,bottom] that defines a screen area for fixation search (in pixels)
     
     duration  -  minimal desirable duration of fixations (in microseconds)
     
@@ -127,7 +127,7 @@ def find_fixations(fix, time=None, area=None, duration=50):
     if time:
         f=f[(f['Start']>time[0]) & (f['Start']<time[1])]
     if area:
-        f=f[(f['Location X']>area[0]) & (f['Location X']<area[2]) & (f['Location Y']>area[1]) & (f['Location Y']<area[3])]
+        f=f[(f['Location X']>area[0]) & (f['Location X']<area[2]) & (f['Location Y']>area[3]) & (f['Location Y']<area[1])]
     f.reset_index(inplace=True)
     
     return f
@@ -139,9 +139,10 @@ def matrix_coordinates(stimuli, resolution, stim_size, shrinkage):
         foo=[]
         foo.extend([bar/shrinkage-(stim_size/2) for bar in item])
         foo.extend([bar/shrinkage+(stim_size/2) for bar in item])
-        foo[0]+=resolution[0]/2
-        foo[1]+=resolution[1]/2
-        foo[2]+=resolution[0]/2
-        foo[3]+=resolution[1]/2
+        
+        foo[0]+=resolution[0]/2 #left 
+        foo[1]=resolution[1]/2-foo[1] #top
+        foo[2]+=resolution[0]/2 #right
+        foo[3]=resolution[1]/2-foo[3] #bottom
         coors.append(foo)
     return coors
